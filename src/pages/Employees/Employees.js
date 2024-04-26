@@ -34,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     right: '10px',
   },
+  selected: {
+    backgroundColor: theme.palette.primary.light,
+    outline: "1px solid " + theme.palette.primary.main,
+  }
 }));
 
 const headCells = [
@@ -64,6 +68,7 @@ export default function Employees() {
     title: '',
     subTitle: '',
   });
+  const [selectedUsers, setSelectedUsers] = useState([]);
 
   const {
     TblContainer,
@@ -109,6 +114,9 @@ export default function Employees() {
       ...confirmDialog,
       isOpen: false,
     });
+    if(selectedUsers.length) {
+      selectedUsers.forEach(user => employeeService.deleteEmployee(user))
+    }
     employeeService.deleteEmployee(id);
     setRecords(employeeService.getAllEmployees());
     setNotify({
@@ -154,7 +162,19 @@ export default function Employees() {
           <TblHead />
           <TableBody>
             {recordsAfterPagingAndSorting().map((item) => (
-              <TableRow key={item.id}>
+              <TableRow
+                  className={selectedUsers.includes(item.id) ? classes.selected : ""}
+                  key={item.id}
+                  onClick={() => {
+                    setSelectedUsers(selectedUsers => {
+                      if(selectedUsers.includes(item.id)) {
+                        return selectedUsers.filter(userId => userId !== item.id)
+                      } else {
+                        return [...selectedUsers, item.id]
+                      }
+                    })
+                  }}
+              >
                 <TableCell>{item.fullName}</TableCell>
                 <TableCell>{item.email}</TableCell>
                 <TableCell>{item.mobile}</TableCell>
@@ -173,7 +193,7 @@ export default function Employees() {
                     onClick={() => {
                       setConfirmDialog({
                         isOpen: true,
-                        title: 'Are you sure you want to delete this record?',
+                        title: `Are you sure you want to delete this record${selectedUsers.length?"s":""}?`,
                         subTitle: "You can't undo this operation",
                         onConfirm: () => {
                           onDelete(item.id);
