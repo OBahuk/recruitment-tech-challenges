@@ -1,5 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core';
+import DepartmentFilter from "./DepartmentFilter";
 
 const useStyles = makeStyles({
   sideMenu: {
@@ -18,7 +19,7 @@ export default function SideMenu() {
     const classes = useStyles()
     return (
         <div className={classes.sideMenu}>
-            
+            <DepartmentFilter />
         </div>
     )
 }

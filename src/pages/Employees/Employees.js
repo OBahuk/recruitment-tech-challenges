@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import EmployeeForm from './EmployeeForm';
 import PageHeader from '../../components/PageHeader';
 import PeopleOutlineTwoToneIcon from '@material-ui/icons/PeopleOutlineTwoTone';
@@ -21,6 +21,7 @@ import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import Notification from '../../components/Notification';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import { MyContext } from '../../App/App'
 
 const useStyles = makeStyles((theme) => ({
   pageContent: {
@@ -49,6 +50,7 @@ const headCells = [
 ];
 
 export default function Employees() {
+  const { filters } = useContext(MyContext);
   const classes = useStyles();
   const [recordForEdit, setRecordForEdit] = useState(null);
   const [records, setRecords] = useState(employeeService.getAllEmployees());
@@ -125,6 +127,20 @@ export default function Employees() {
       type: 'error',
     });
   };
+
+  useEffect(() => {
+
+    let newRecords = employeeService.getAllEmployees()
+    Object.entries(filters).forEach(([key, value]) => {
+      if(!value) {return}
+      newRecords = newRecords.filter(record => {
+        return record[key] === value
+      })
+    })
+
+    setRecords(newRecords)
+
+  }, [filters])
 
   return (
     <>

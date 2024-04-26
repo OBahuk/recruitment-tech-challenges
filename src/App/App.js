@@ -1,3 +1,4 @@
+import { createContext, useState } from 'react';
 import {
   CssBaseline,
   makeStyles,
@@ -38,6 +39,8 @@ const theme = createMuiTheme({
   },
 });
 
+export const MyContext = createContext();
+
 const useStyles = makeStyles({
   appMain: {
     paddingLeft: '320px',
@@ -46,17 +49,20 @@ const useStyles = makeStyles({
 });
 
 function App() {
+  const [filters, setFilters] = useState({})
   const classes = useStyles();
   seedEmployees();
   return (
     <ThemeProvider theme={theme}>
-      <SideMenu />
-      <div className={classes.appMain}>
-        <Header />
-        
-        <Employees />
-      </div>
-      <CssBaseline />
+      <MyContext.Provider value={{filters, setFilters}}>
+        <SideMenu />
+        <div className={classes.appMain}>
+          <Header />
+
+          <Employees />
+        </div>
+        <CssBaseline />
+      </MyContext.Provider>
     </ThemeProvider>
   );
 }
